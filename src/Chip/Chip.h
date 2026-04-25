@@ -35,7 +35,7 @@ public:
 
 	// Accumulators
 	double m_timerAccumulator = 0.0;
-	double m_cyclesAcculumator = 0.0;
+	double m_cyclesAccumulator = 0.0;
 	
 // Components:
 	Memory	m_memory;
@@ -61,7 +61,7 @@ public:
 
 // Methods
 public:
-	void		Startup(uint8_t displayScaleFactor, uint16_t instructionsPerSeconds);
+	void		Startup(uint8_t displayScaleFactor, uint16_t instructionsPerSecond);
 
 
 	void		Cycle(double deltaTime);
@@ -69,11 +69,30 @@ public:
 	bool		DecodeExecute(uint16_t opcode);
 
 	// Operations
-	void		Op_ClearScreen();
-	void		Op_JumpTo(uint16_t nnn);
-	void		Op_SetRegister(uint8_t x, uint8_t nn);
-	void		Op_AddToRegister(uint8_t x, uint8_t nn);
-	void		Op_SetIndexReg(uint16_t nnn);
-	void		Op_DrawToScreen(uint8_t x, uint8_t y, uint8_t n);
+				
+	void		Op_ClearScreen();										// 00E0
+	void		Op_JumpTo(uint16_t nnn);								// 1NNN 
+	void		Op_SetRegister(uint8_t x, uint8_t nn);					// 6XNN 
+	void		Op_AddToRegister(uint8_t x, uint8_t nn);				// 7XNN 
+	void		Op_SetIndexReg(uint16_t nnn);							// ANNN 
+	void		Op_DrawToScreen(uint8_t x, uint8_t y, uint8_t n);		// DXYN 
+
+	void		Op_CallSubrtn(uint16_t nnn);							// 2NNN
+	void		Op_ReturnFromSubrtn();									// 00EE
+
+	void		Op_SkipNnCondIfEqual(uint8_t x, uint8_t nn);			// 3XNN 
+	void		Op_SkipNnCondIfNotEqual(uint8_t x, uint8_t nn);			// 4XNN
+
+	void		Op_SkipXyCondIfEqual(uint8_t x, uint8_t y);				// 5XY0
+	void		Op_SkipXyCondIfNotEqual(uint8_t x, uint8_t y);			// 9XY0
+
+	// LA = LogicArithmetic
+	void		Op_LASet(uint8_t x, uint8_t y);							// 8XY0
+	void		Op_LABinaryOr(uint8_t x, uint8_t y);					// 8XY1
+	void		Op_LABinaryAnd(uint8_t x, uint8_t y);					// 8XY2
+	void		Op_LALogicalXor(uint8_t x, uint8_t y);					// 8XY3
+	void		Op_LAAdd(uint8_t x, uint8_t y);							// 8XY4
+	void		Op_LASubtractY(uint8_t x, uint8_t y);					// 8XY5 
+	void		Op_LASubtractX(uint8_t x, uint8_t y);					// 8XY7 
 };
 }

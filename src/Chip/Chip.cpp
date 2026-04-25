@@ -2,32 +2,34 @@
 
 namespace Chip8Emulator
 {
-void Chip::Startup(uint8_t displayScaleFactor, uint16_t instructionsPerSeconds)
+void Chip::Startup(uint8_t displayScaleFactor, uint16_t instructionsPerSecond)
 {
-	m_instructionsPerSecond = instructionsPerSeconds;
+	m_instructionsPerSecond = instructionsPerSecond;
 
 	m_memory.InitMemory();
+	pc = 0x200;
 	m_display.InitDisplay(displayScaleFactor);
-	m_delayTimer = 60;
+	m_delayTimer = 0;
+	m_soundTimer = 0;
 	m_isRunning = true;
 }
 
 void Chip::Cycle(double deltaTime)
 {
 	// Update Timers
-	m_cyclesAcculumator += deltaTime;
+	m_cyclesAccumulator += deltaTime;
 	m_timerAccumulator += deltaTime;
 
 	double cycleThreshold = (1.0 / m_instructionsPerSecond);
-	if (m_cyclesAcculumator >= cycleThreshold)
+	while (m_cyclesAccumulator >= cycleThreshold)
 	{
-		m_cyclesAcculumator -= cycleThreshold;
+		m_cyclesAccumulator -= cycleThreshold;
 
 		// Perform a cycle
 		uint16_t opcode = Fetch();
 		if (!DecodeExecute(opcode))
 		{
-			SDL_Log("Critical Error! OpCode [%d] not implemented?", opcode);
+			SDL_Log("Critical Error! OpCode [0x%04X] not implemented?", opcode);
 		}
 	}
 
@@ -69,6 +71,12 @@ bool Chip::DecodeExecute(uint16_t opcode)
 				Op_ClearScreen();
 				return true;
 			}
+
+			if (nnn == 0x0EE)
+			{
+				Op_ReturnFromSubrtn();
+				return true;
+			}
 			break;
 
 		case 0x1:
@@ -89,6 +97,52 @@ bool Chip::DecodeExecute(uint16_t opcode)
 
 		case 0xD:
 			Op_DrawToScreen(x, y, n);
+			return true;
+
+		case 0x2:
+			Op_CallSubrtn(nnn);
+			return true;
+
+		case 0x3:
+			Op_SkipNnCondIfEqual(x, nn);
+			return true;
+
+		case 0x4:
+			Op_SkipNnCondIfNotEqual(x, nn);
+			return true;
+
+		case 0x5:
+			Op_SkipXyCondIfEqual(x, y);
+			return true;
+
+		case 0x9:
+			Op_SkipXyCondIfNotEqual(x, y);
+			return true;
+
+		case 0x8:
+			if (n == 0x0)
+				Op_LASet(x, y);
+
+			else if (n == 0x1)
+				Op_LABinaryOr(x, y);
+
+			else if (n == 0x2)
+				Op_LABinaryAnd(x, y);
+
+			else if (n == 0x3)
+				Op_LALogicalXor(x, y);
+
+			else if (n == 0x4)
+				Op_LAAdd(x, y);
+
+			else if (n == 0x5)
+				Op_LASubtractY(x, y);
+
+			else if (n == 0x7)
+				Op_LASubtractX(x, y);
+			else
+				return false;
+
 			return true;
 	}
 
@@ -151,6 +205,99 @@ void Chip::Op_DrawToScreen(uint8_t x, uint8_t y, uint8_t n)
 		m_vx[0xF] = 1;
 
 	m_display.Update();
+}
+
+void Chip::Op_CallSubrtn(uint16_t nnn)
+{
+	m_stack.push(pc);
+	pc = nnn;
+}
+
+void Chip::Op_ReturnFromSubrtn()
+{
+	if (!m_stack.empty())
+	{
+		pc = m_stack.top();
+		m_stack.pop();
+	}
+	else
+		SDL_Log("Stack underflow during [Op_ReturnFromSubrtn]");
+}
+
+void Chip::Op_SkipNnCondIfEqual(uint8_t x, uint8_t nn)
+{
+	if (m_vx[x] == nn)
+		pc += 2;
+}
+
+void Chip::Op_SkipNnCondIfNotEqual(uint8_t x, uint8_t nn)
+{
+	if (m_vx[x] != nn)
+		pc += 2;
+}
+
+void Chip::Op_SkipXyCondIfEqual(uint8_t x, uint8_t y)
+{
+	if (m_vx[x] == m_vx[y])
+		pc += 2;
+
+}
+
+void Chip::Op_SkipXyCondIfNotEqual(uint8_t x, uint8_t y)
+{
+	if (m_vx[x] != m_vx[y])
+		pc += 2;
+}
+
+void Chip::Op_LASet(uint8_t x, uint8_t y)
+{
+	m_vx[x] = m_vx[y];
+}
+
+void Chip::Op_LABinaryOr(uint8_t x, uint8_t y)
+{
+	m_vx[x] = m_vx[x] | m_vx[y];
+}
+
+void Chip::Op_LABinaryAnd(uint8_t x, uint8_t y)
+{
+	m_vx[x] = m_vx[x] & m_vx[y];
+}
+
+void Chip::Op_LALogicalXor(uint8_t x, uint8_t y)
+{
+	m_vx[x] = m_vx[x] ^ m_vx[y];
+}
+
+void Chip::Op_LAAdd(uint8_t x, uint8_t y)
+{
+	uint16_t result = m_vx[x] + m_vx[y];
+	bool overflow = (result > 255);
+
+	// Set
+	m_vx[x] = result;
+
+	if (overflow)
+		m_vx[0xF] = 1;
+	else
+		m_vx[0xF] = 0;
+}
+
+void Chip::Op_LASubtractY(uint8_t x, uint8_t y)
+{
+	uint8_t flag = (m_vx[x] >= m_vx[y]) ? 1 : 0;
+	m_vx[x] = m_vx[x] - m_vx[y];
+
+	m_vx[0xF] = flag;
+}
+
+void Chip::Op_LASubtractX(uint8_t x, uint8_t y)
+{
+	uint8_t flag = (m_vx[y] >= m_vx[x]) ? 1 : 0;
+	m_vx[x] = m_vx[y] - m_vx[x];
+
+	m_vx[0xF] = flag;
+
 }
 
 }
