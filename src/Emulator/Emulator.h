@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <random>
 
 #include "Input.h"
 #include "../Chip/Chip.h"
@@ -20,27 +21,15 @@ public:
 		return instance;
 	}
 
-	struct Settings
-	{
-		uint16_t displayScale;
-		uint32_t instructionsPerSeconds;
-
-		Settings()
-		{
-			displayScale = 20;
-			instructionsPerSeconds = 700;
-		}
-	};
-
 private:
 	bool		m_isRunning = false;
-	Settings	m_settings;
+	Settings	m_emuSettings;
 
 	Input		m_input;
 	Chip		m_chip;
 
 public:
-	Emulator() : m_isRunning(false)
+	Emulator() : m_isRunning(false), m_chip(m_input)
 	{
 	}
 
@@ -76,7 +65,7 @@ public:
 
 	Settings& GetSettings()
 	{
-		return m_settings;
+		return m_emuSettings;
 	}
 };
 }

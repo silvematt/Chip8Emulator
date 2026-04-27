@@ -2,13 +2,15 @@
 
 namespace Chip8Emulator
 {
-void Chip::Startup(uint8_t displayScaleFactor, uint16_t instructionsPerSecond)
+void Chip::Startup(Settings emuSettings)
 {
-	m_instructionsPerSecond = instructionsPerSecond;
+	m_operationalSettings.instructionsPerSecond = emuSettings.instructionsPerSecond;
+	m_operationalSettings.cosmacInstructionsSet = emuSettings.cosmacInstructionsSet;
+	m_operationalSettings.addToIndexOverflowsVF = emuSettings.addToIndexOverflowsVF;
 
 	m_memory.InitMemory();
 	pc = 0x200;
-	m_display.InitDisplay(displayScaleFactor);
+	m_display.InitDisplay(emuSettings.displayScale);
 	m_delayTimer = 0;
 	m_soundTimer = 0;
 	m_isRunning = true;
@@ -20,7 +22,7 @@ void Chip::Cycle(double deltaTime)
 	m_cyclesAccumulator += deltaTime;
 	m_timerAccumulator += deltaTime;
 
-	double cycleThreshold = (1.0 / m_instructionsPerSecond);
+	double cycleThreshold = (1.0 / m_operationalSettings.instructionsPerSecond);
 	while (m_cyclesAccumulator >= cycleThreshold)
 	{
 		m_cyclesAccumulator -= cycleThreshold;
@@ -138,8 +140,48 @@ bool Chip::DecodeExecute(uint16_t opcode)
 			else if (n == 0x5)
 				Op_LASubtractY(x, y);
 
+			else if (n == 0x6)
+				Op_LAShiftRight(x, y);
+
 			else if (n == 0x7)
 				Op_LASubtractX(x, y);
+
+			else if (n == 0xE)
+				Op_LAShiftLeft(x, y);
+
+			else
+				return false;
+
+			return true;
+
+		case 0xB:
+			Op_JumpToWithOffset(x, nn, nnn);
+			return true;
+
+		case 0xC:
+			Op_Random(x, nn);
+			return true;
+
+		case 0xE:
+			if (nn == 0x9E)
+				Op_SkipIfKeyPressed(x);
+			else if (nn == 0xA1)
+				Op_SkipIfKeyNotPressed(x);
+			else 
+				return false;
+
+			return true;
+
+		case 0xF:
+
+			if (nn == 0x07)
+				Op_SetVxToDelayTimerValue(x);
+			else if (nn == 0x15)
+				Op_SetDelayTimer(x);
+			else if (nn == 0x18)
+				Op_SetSoundTimer(x);
+			else if (nn == 0x1E)
+				Op_AddToIndex(x);
 			else
 				return false;
 
@@ -157,6 +199,20 @@ void Chip::Op_ClearScreen()
 void Chip::Op_JumpTo(uint16_t nnn)
 {
 	pc = nnn;
+}
+
+void Chip::Op_JumpToWithOffset(uint8_t x, uint8_t nn, uint16_t nnn)
+{
+	if (m_operationalSettings.cosmacInstructionsSet)
+	{
+		pc = nnn;
+		pc += m_vx[0];
+	}
+	else
+	{
+		pc = nnn;
+		pc += m_vx[x];
+	}
 }
 
 void Chip::Op_SetRegister(uint8_t x, uint8_t nn)
@@ -277,10 +333,7 @@ void Chip::Op_LAAdd(uint8_t x, uint8_t y)
 	// Set
 	m_vx[x] = result;
 
-	if (overflow)
-		m_vx[0xF] = 1;
-	else
-		m_vx[0xF] = 0;
+	m_vx[0xF] = (overflow) ? 1 : 0;
 }
 
 void Chip::Op_LASubtractY(uint8_t x, uint8_t y)
@@ -298,6 +351,72 @@ void Chip::Op_LASubtractX(uint8_t x, uint8_t y)
 
 	m_vx[0xF] = flag;
 
+}
+
+void Chip::Op_LAShiftRight(uint8_t x, uint8_t y)
+{
+	if (m_operationalSettings.cosmacInstructionsSet)
+		m_vx[x] = m_vx[y];
+
+	uint8_t bit = m_vx[x] & 0x1;
+	m_vx[x] = m_vx[x] >> 1;
+
+	m_vx[0xF] = bit;
+}
+
+void Chip::Op_LAShiftLeft(uint8_t x, uint8_t y)
+{
+	if (m_operationalSettings.cosmacInstructionsSet)
+		m_vx[x] = m_vx[y];
+
+	uint8_t bit = (m_vx[x] & 0x80) >> 7;
+	m_vx[x] = m_vx[x] << 1;
+
+	m_vx[0xF] = bit;
+}
+
+void Chip::Op_Random(uint8_t x, uint8_t nn)
+{
+	uint8_t num = rand() % 256;
+	m_vx[x] = nn & num;
+}
+
+void Chip::Op_SkipIfKeyPressed(uint8_t x)
+{
+	if (m_inputRef.GetKeyHeld((static_cast<SDL_Scancode>(m_vx[x]))))
+		pc += 2;
+}
+
+void Chip::Op_SkipIfKeyNotPressed(uint8_t x)
+{
+	if (m_inputRef.GetKeyUp((static_cast<SDL_Scancode>(m_vx[x]))))
+		pc += 2;
+}
+
+void Chip::Op_SetVxToDelayTimerValue(uint8_t x)
+{
+	m_vx[x] = m_delayTimer;
+}
+
+void Chip::Op_SetDelayTimer(uint8_t x)
+{
+	m_delayTimer = m_vx[x];
+}
+
+void Chip::Op_SetSoundTimer(uint8_t x)
+{
+	m_soundTimer = m_vx[x];
+}
+
+void Chip::Op_AddToIndex(uint8_t x)
+{
+	uint16_t result = ir + m_vx[x];
+	bool overflow = (result >= 0x1000);
+
+	ir = result;
+
+	if (m_operationalSettings.addToIndexOverflowsVF)
+		m_vx[0xF] = (overflow) ? 1 : 0;
 }
 
 }

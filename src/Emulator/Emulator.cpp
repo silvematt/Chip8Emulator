@@ -21,12 +21,14 @@ int Emulator::Init()
 		return -2;
 	}
 
+	srand(time(NULL));
+
 	return 0;
 }
 
 int Emulator::Start()
 {
-	m_chip.Startup(m_settings.displayScale, m_settings.instructionsPerSeconds);
+	m_chip.Startup(m_emuSettings);
 	DirectLoadRom("IBMLogo.ch8");
 	m_isRunning = true;
 	return 0;

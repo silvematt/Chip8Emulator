@@ -132,6 +132,7 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Chip\Components\Settings.h" />
     <ClInclude Include="src\Emulator\Input.h" />
     <ClInclude Include="src\Emulator\Emulator.h" />
     <ClInclude Include="src\Chip\Chip.h" />

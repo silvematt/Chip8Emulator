@@ -31,6 +31,7 @@ void Input::Handle()
 
 	Emulator& emulator = Emulator::Instance();
 
+	m_anyKey = -1;
 	//Handle events
 	while (SDL_PollEvent(&e) != 0)
 	{
@@ -41,6 +42,7 @@ void Input::Handle()
 			break;
 
 		case SDL_KEYDOWN:
+			m_anyKey = e.key.keysym.sym;
 			break;
 		}
 	}
@@ -61,7 +63,7 @@ int Input::GetKeyHeld(SDL_Scancode key) const
 
 int Input::GetKeyDown(SDL_Scancode key) const
 {
-	if (key < 0 || key > m_numKeys)
+	if (key < 0 || key >= m_numKeys)
 		return -1;
 
 	return (m_keys[key] & ~m_prevKeys[key]);
@@ -73,6 +75,11 @@ int Input::GetKeyUp(SDL_Scancode key) const
 		return -1;
 
 	return (!m_keys[key] & m_prevKeys[key]);
+}
+
+int Input::AnyKeyDown() const
+{
+	return m_anyKey;
 }
 
 }
