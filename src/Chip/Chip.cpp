@@ -7,10 +7,12 @@ void Chip::Startup(Settings emuSettings)
 	m_operationalSettings.instructionsPerSecond = emuSettings.instructionsPerSecond;
 	m_operationalSettings.cosmacInstructionsSet = emuSettings.cosmacInstructionsSet;
 	m_operationalSettings.addToIndexOverflowsVF = emuSettings.addToIndexOverflowsVF;
+	m_operationalSettings.modernMemoryLoad		= emuSettings.modernMemoryLoad;
 
 	m_memory.InitMemory();
 	pc = 0x200;
 	m_display.InitDisplay(emuSettings.displayScale);
+	m_keypad.Init();
 	m_delayTimer = 0;
 	m_soundTimer = 0;
 	m_isRunning = true;
@@ -173,7 +175,6 @@ bool Chip::DecodeExecute(uint16_t opcode)
 			return true;
 
 		case 0xF:
-
 			if (nn == 0x07)
 				Op_SetVxToDelayTimerValue(x);
 			else if (nn == 0x15)
@@ -182,6 +183,16 @@ bool Chip::DecodeExecute(uint16_t opcode)
 				Op_SetSoundTimer(x);
 			else if (nn == 0x1E)
 				Op_AddToIndex(x);
+			else if (nn == 0x0A)
+				Op_GetKey(x);
+			else if (nn == 0x29)
+				Op_FontCharacter(x);
+			else if (nn == 0x33)
+				Op_BinaryCodedDecimalConversion(x);
+			else if (nn == 0x55)
+				Op_StoreIntoMemory(x);
+			else if (nn == 0x65)
+				Op_LoadFromMemory(x);
 			else
 				return false;
 
@@ -383,13 +394,13 @@ void Chip::Op_Random(uint8_t x, uint8_t nn)
 
 void Chip::Op_SkipIfKeyPressed(uint8_t x)
 {
-	if (m_inputRef.GetKeyHeld((static_cast<SDL_Scancode>(m_vx[x]))))
+	if (m_inputRef.GetKeyHeld(SDL_GetScancodeFromKey(m_keypad.GetKeycodes()[m_vx[x]])))
 		pc += 2;
 }
 
 void Chip::Op_SkipIfKeyNotPressed(uint8_t x)
 {
-	if (m_inputRef.GetKeyUp((static_cast<SDL_Scancode>(m_vx[x]))))
+	if (!m_inputRef.GetKeyHeld(SDL_GetScancodeFromKey(m_keypad.GetKeycodes()[m_vx[x]])))
 		pc += 2;
 }
 
@@ -417,6 +428,61 @@ void Chip::Op_AddToIndex(uint8_t x)
 
 	if (m_operationalSettings.addToIndexOverflowsVF)
 		m_vx[0xF] = (overflow) ? 1 : 0;
+}
+
+void Chip::Op_GetKey(uint8_t x)
+{
+	SDL_Keycode keyPressed = m_inputRef.AnyKeyUp();
+	if (keyPressed == -1)
+	{
+		pc -= 2;
+	}
+	else
+	{
+		keyPressed = m_keypad.GetHexKey(keyPressed);
+
+		if (keyPressed == 0xFF)
+			pc -= 2;
+		else
+		{
+			SDL_Log("%d", keyPressed);
+			m_vx[x] = keyPressed;
+		}
+	}
+}
+
+void Chip::Op_FontCharacter(uint8_t x)
+{
+	ir = 0x50 + (5 * m_vx[x]);
+}
+
+void Chip::Op_BinaryCodedDecimalConversion(uint8_t x)
+{
+	m_memory.memory[ir]		= m_vx[x] / 100;
+	m_memory.memory[ir+1]	= (m_vx[x] / 10) % 10;
+	m_memory.memory[ir+2]	= m_vx[x] % 10;;
+}
+
+void Chip::Op_StoreIntoMemory(uint8_t x)
+{
+	uint16_t temp = ir;
+	uint16_t& regRef = (m_operationalSettings.modernMemoryLoad) ? temp : ir;
+
+	for (int i = 0; i <= x; i++)
+	{
+		m_memory.memory[regRef++] = m_vx[i];
+	}
+}
+
+void Chip::Op_LoadFromMemory(uint8_t x)
+{
+	uint16_t temp = ir;
+	uint16_t& regRef = (m_operationalSettings.modernMemoryLoad) ? temp : ir;
+
+	for (int i = 0; i <= x; i++)
+	{
+		m_vx[i] = m_memory.memory[regRef++];
+	}
 }
 
 }

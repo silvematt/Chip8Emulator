@@ -11,8 +11,8 @@ private:
 	Uint8*	m_prevKeys;
 	int		m_numKeys;
 
-	int		m_anyKey;
-
+	SDL_Keycode	m_anyKey;
+	SDL_Keycode	m_anyKeyUp;
 public:
 	~Input();
 
@@ -22,8 +22,9 @@ public:
 	int				GetKeyHeld(SDL_Scancode key) const;
 	int				GetKeyDown(SDL_Scancode key) const;
 	int				GetKeyUp(SDL_Scancode key) const;
-	int				AnyKeyDown() const;
 
+	SDL_Keycode		AnyKeyDown() const;
+	SDL_Keycode		AnyKeyUp() const;
 };
 
 }

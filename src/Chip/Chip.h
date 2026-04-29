@@ -9,6 +9,7 @@
 #include "Components/Memory.h"
 #include "Components/Display.h"
 #include "Components/Settings.h"
+#include "Components/Keypad.h"
 
 #include "../Emulator/Input.h"
 
@@ -43,6 +44,8 @@ public:
 // Components:
 	Memory	m_memory;
 	Display m_display;
+	Keypad	m_keypad;
+
 	Input&	m_inputRef;
 
 	// PC - Program Counter
@@ -112,6 +115,12 @@ public:
 	void		Op_SetSoundTimer(uint8_t x);								// FX18 
 
 	void		Op_AddToIndex(uint8_t x);									// FX1E
+
+	void		Op_GetKey(uint8_t x);										// FX0A
+	void		Op_FontCharacter(uint8_t x);								// FX29
+	void		Op_BinaryCodedDecimalConversion(uint8_t x);					// FX33
+	void		Op_StoreIntoMemory(uint8_t x);								// FX55 
+	void		Op_LoadFromMemory(uint8_t x);								// FX65 
 
 };
 }

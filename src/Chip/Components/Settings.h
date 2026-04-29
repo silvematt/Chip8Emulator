@@ -10,6 +10,7 @@ namespace Chip8Emulator
 
 		bool cosmacInstructionsSet; // some chip8 instructions are ambigious between original cosmac vip and next versions
 		bool addToIndexOverflowsVF;
+		bool modernMemoryLoad;
 
 		Settings()
 		{
@@ -17,6 +18,7 @@ namespace Chip8Emulator
 			instructionsPerSecond = 700;
 			cosmacInstructionsSet = true;
 			addToIndexOverflowsVF = true;
+			modernMemoryLoad = false;
 		}
     };
 }
