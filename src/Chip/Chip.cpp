@@ -434,9 +434,7 @@ void Chip::Op_GetKey(uint8_t x)
 {
 	SDL_Keycode keyPressed = m_inputRef.AnyKeyUp();
 	if (keyPressed == -1)
-	{
 		pc -= 2;
-	}
 	else
 	{
 		keyPressed = m_keypad.GetHexKey(keyPressed);
@@ -444,10 +442,7 @@ void Chip::Op_GetKey(uint8_t x)
 		if (keyPressed == 0xFF)
 			pc -= 2;
 		else
-		{
-			SDL_Log("%d", keyPressed);
 			m_vx[x] = keyPressed;
-		}
 	}
 }
 

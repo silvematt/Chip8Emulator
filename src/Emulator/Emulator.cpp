@@ -66,6 +66,7 @@ void Emulator::Shutdown()
 {
 	SDL_Log("Shutting down the Emulator...");
 	m_chip.m_isRunning = false;
+	m_chip.m_display.Destroy();
 
 	SDL_Quit();
 }
