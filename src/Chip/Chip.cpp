@@ -2,7 +2,7 @@
 
 namespace Chip8Emulator
 {
-void Chip::Startup(Settings emuSettings)
+void Chip::Startup(SDL_Renderer* renderer, Settings emuSettings)
 {
 	m_operationalSettings.instructionsPerSecond = emuSettings.instructionsPerSecond;
 	m_operationalSettings.cosmacInstructionsSet = emuSettings.cosmacInstructionsSet;
@@ -11,7 +11,7 @@ void Chip::Startup(Settings emuSettings)
 
 	m_memory.InitMemory();
 	pc = 0x200;
-	m_display.InitDisplay(emuSettings.displayScale);
+	m_display.InitDisplay(renderer);
 	m_keypad.Init();
 	m_delayTimer = 0;
 	m_soundTimer = 0;
@@ -271,7 +271,7 @@ void Chip::Op_DrawToScreen(uint8_t x, uint8_t y, uint8_t n)
 	if (collOff)
 		m_vx[0xF] = 1;
 
-	m_display.Update();
+	// m_display.Update(); this is now done in the emulator
 }
 
 void Chip::Op_CallSubrtn(uint16_t nnn)

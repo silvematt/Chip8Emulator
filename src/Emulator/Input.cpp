@@ -1,5 +1,6 @@
 #include "Input.h"
 #include "Emulator.h"
+#include <imgui_impl_sdl2.h>
 
 namespace Chip8Emulator
 {
@@ -36,6 +37,8 @@ void Input::Handle()
 	//Handle events
 	while (SDL_PollEvent(&e) != 0)
 	{
+		ImGui_ImplSDL2_ProcessEvent(&e);
+
 		switch (e.type)
 		{
 		case SDL_QUIT:

@@ -6,9 +6,9 @@
 
 #include "SDL.h"
 
+#include "../Emulator/Settings.h"
 #include "Components/Memory.h"
 #include "Components/Display.h"
-#include "Components/Settings.h"
 #include "Components/Keypad.h"
 
 #include "../Emulator/Input.h"
@@ -68,7 +68,7 @@ public:
 
 // Methods
 public:
-	void		Startup(Settings emuSettings);
+	void		Startup(SDL_Renderer* renderer, Settings emuSettings);
 
 
 	void		Cycle(double deltaTime);

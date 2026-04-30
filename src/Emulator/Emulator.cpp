@@ -3,11 +3,23 @@
 #include <SDL.h>
 #include <fstream>
 
+#ifdef _WIN32
+#include <windows.h>        // SetProcessDPIAware()
+#endif
+
+#include "imgui.h"
+#include "imgui_impl_sdl2.h"
+#include "imgui_impl_sdlrenderer2.h"
+
+#include "Windows/SettingsWindow.h"
 
 namespace Chip8Emulator
 {
 int Emulator::Init()
 {
+#ifdef _WIN32
+	::SetProcessDPIAware();
+#endif
 	// Init SDL
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
@@ -23,12 +35,50 @@ int Emulator::Init()
 
 	srand(time(NULL));
 
+	// Init Windows
+	float main_scale = ImGui_ImplSDL2_GetContentScaleForDisplay(0);
+
+	uint32_t winFlags = SDL_WINDOW_RESIZABLE;
+	//uint32_t winFlags = SDL_WINDOW_FULLSCREEN;
+	m_window = SDL_CreateWindow("Chip8Emulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (int)(SCREEN_WIDTH * main_scale), (int)(SCREEN_HEIGHT * main_scale), winFlags);
+
+	Uint32 renFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+	m_renderer = SDL_CreateRenderer(m_window, -1, renFlags);
+
+	if (!m_window || !m_renderer)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create Window/Renderer!");
+		return -3;
+	}
+
+	// Initialize the Draw Color to black
+	SDL_SetRenderDrawColor(m_renderer, colorBlack.r, colorBlack.g, colorBlack.b, colorBlack.a);
+
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+
+	// Setup scaling
+	ImGuiStyle& style = ImGui::GetStyle();
+	style.ScaleAllSizes(main_scale);
+	style.FontScaleDpi = main_scale;
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplSDL2_InitForSDLRenderer(m_window, m_renderer);
+	ImGui_ImplSDLRenderer2_Init(m_renderer);
+
 	return 0;
 }
 
 int Emulator::Start()
 {
-	m_chip.Startup(m_emuSettings);
+	m_chip.Startup(m_renderer, m_emuSettings);
 	DirectLoadRom("IBMLogo.ch8");
 	m_isRunning = true;
 	return 0;
@@ -47,8 +97,26 @@ void Emulator::Update()
 		//Handle events
 		m_input.Handle();
 
+		// Start the Dear ImGui frame
+		ImGui_ImplSDLRenderer2_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
+		ImGui::NewFrame();
+
+		SDL_RenderClear(m_renderer);
+
 		// Run Chip
 		m_chip.Cycle(deltaTime);
+		m_chip.m_display.Update();
+
+		// Draw Windows
+		m_menuWin.Draw();
+		m_settingsWin.Draw();
+
+		// Render Imgui
+		ImGui::Render();
+		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), m_renderer);
+
+		SDL_RenderPresent(m_renderer);
 
 		SDL_Delay(1);
 	}
@@ -66,7 +134,17 @@ void Emulator::Shutdown()
 {
 	SDL_Log("Shutting down the Emulator...");
 	m_chip.m_isRunning = false;
+
+	// Cleanup
 	m_chip.m_display.Destroy();
+
+	// Cleanup
+	ImGui_ImplSDLRenderer2_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+
+	SDL_DestroyRenderer(m_renderer);
+	SDL_DestroyWindow(m_window);
 
 	SDL_Quit();
 }

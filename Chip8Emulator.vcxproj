@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Lib\SDL2-2.30.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\silve\Documents\Git Projects\Chip8Emulator\src\imgui\backends;C:\Users\silve\Documents\Git Projects\Chip8Emulator\src\imgui;C:\Lib\SDL2-2.30.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -130,16 +130,33 @@
     <ClCompile Include="src\Emulator\Input.cpp" />
     <ClCompile Include="src\Emulator\Emulator.cpp" />
     <ClCompile Include="src\Chip\Chip.cpp" />
+    <ClCompile Include="src\imgui\backends\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="src\imgui\backends\imgui_impl_sdlrenderer2.cpp" />
+    <ClCompile Include="src\imgui\imgui.cpp" />
+    <ClCompile Include="src\imgui\imgui_demo.cpp" />
+    <ClCompile Include="src\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\imgui\imgui_tables.cpp" />
+    <ClCompile Include="src\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Chip\Components\Keypad.h" />
-    <ClInclude Include="src\Chip\Components\Settings.h" />
+    <ClInclude Include="src\Emulator\Settings.h" />
     <ClInclude Include="src\Emulator\Input.h" />
     <ClInclude Include="src\Emulator\Emulator.h" />
     <ClInclude Include="src\Chip\Chip.h" />
     <ClInclude Include="src\Chip\Components\Display.h" />
     <ClInclude Include="src\Chip\Components\Memory.h" />
+    <ClInclude Include="src\Emulator\Windows\MenuBarWindow.h" />
+    <ClInclude Include="src\Emulator\Windows\SettingsWindow.h" />
+    <ClInclude Include="src\imgui\backends\imgui_impl_sdl2.h" />
+    <ClInclude Include="src\imgui\backends\imgui_impl_sdlrenderer2.h" />
+    <ClInclude Include="src\imgui\imconfig.h" />
+    <ClInclude Include="src\imgui\imgui.h" />
+    <ClInclude Include="src\imgui\imgui_internal.h" />
+    <ClInclude Include="src\imgui\imstb_rectpack.h" />
+    <ClInclude Include="src\imgui\imstb_textedit.h" />
+    <ClInclude Include="src\imgui\imstb_truetype.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

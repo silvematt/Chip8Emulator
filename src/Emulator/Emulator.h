@@ -6,6 +6,10 @@
 #include "Input.h"
 #include "../Chip/Chip.h"
 
+#include "Windows/MenuBarWindow.h"
+#include "Windows/SettingsWindow.h"
+
+
 namespace Chip8Emulator
 {
 // ===============================================
@@ -13,6 +17,11 @@ namespace Chip8Emulator
 // ===============================================
 class Emulator
 {
+	static constexpr int SCREEN_WIDTH = 1920;
+	static constexpr int SCREEN_HEIGHT = 1080;
+
+	static inline const SDL_Color colorBlack = { 0, 0, 0, SDL_ALPHA_OPAQUE };
+	static inline const SDL_Color colorWhite = { 255, 255, 255, SDL_ALPHA_OPAQUE };
 
 public:
 	static Emulator& Instance()
@@ -28,8 +37,15 @@ private:
 	Input		m_input;
 	Chip		m_chip;
 
+	SDL_Window*		m_window = nullptr;
+	SDL_Renderer*	m_renderer = nullptr;
+
+	// Imgui Windows
+	MenuBarWindow	m_menuWin;
+	SettingsWindow	m_settingsWin;
+
 public:
-	Emulator() : m_isRunning(false), m_chip(m_input)
+	Emulator() : m_isRunning(false), m_chip(m_input), m_settingsWin(m_emuSettings)
 	{
 	}
 
@@ -63,7 +79,7 @@ public:
 	// ================================================
 	void DirectLoadRom(const std::string& path);
 
-	Settings& GetSettings()
+	const Settings& GetSettings()
 	{
 		return m_emuSettings;
 	}
