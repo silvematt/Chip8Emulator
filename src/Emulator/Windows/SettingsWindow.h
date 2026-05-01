@@ -26,46 +26,43 @@ private:
 public:
 	void Draw()
 	{
-		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-		{
-			ImGui::Begin("Settings:");
-			ImGui::Text("Emulator Settings:");
+		ImGui::Begin("Settings:");
+		ImGui::Text("Emulator Settings:");
 
-			ImGui::Separator();
-			ImGui::PushItemWidth(50);
+		ImGui::Separator();
+		ImGui::PushItemWidth(50);
 
-			// Settings
-			ImGui::Checkbox("Cosmac Instruction Set", &settingsRef.cosmacInstructionsSet);
-			ImGui::Checkbox("Add To Index Overflows VF", &settingsRef.addToIndexOverflowsVF);
-			ImGui::Checkbox("Modern Memory Load", &settingsRef.modernMemoryLoad);
+		// Settings
+		ImGui::Checkbox("Cosmac Instruction Set", &settingsRef.cosmacInstructionsSet);
+		ImGui::Checkbox("Add To Index Overflows VF", &settingsRef.addToIndexOverflowsVF);
+		ImGui::Checkbox("Modern Memory Load", &settingsRef.modernMemoryLoad);
 
 			
-			ImGui::PushItemWidth(100);
-			ImGui::Text("IPS");
-			ImGui::SameLine();
-			if (ImGui::InputScalar("##IPS", ImGuiDataType_U32, &settingsRef.instructionsPerSecond, &step, &step_fast, "%u"))
-			{
-				SDL_Log("changed!! %d", settingsRef.instructionsPerSecond);
-			}
-
-			ImGui::PushItemWidth(50);
-			ImGui::Text("Display Scale");
-			ImGui::SameLine();
-			if (ImGui::InputScalar("##Display Scale", ImGuiDataType_U32, &settingsRef.displayScale))
-			{
-				SDL_Log("changed!! %d", settingsRef.displayScale);
-			}
-
-			ImGui::Dummy(ImVec2(0.0f, 20.0f)); // 20px vertical space
-
-
-			if (ImGui::Button("Apply", ImVec2(-1, 0)))
-			{
-
-			}
-
-			ImGui::End();
+		ImGui::PushItemWidth(100);
+		ImGui::Text("IPS");
+		ImGui::SameLine();
+		if (ImGui::InputScalar("##IPS", ImGuiDataType_U32, &settingsRef.instructionsPerSecond, &step, &step_fast, "%u"))
+		{
+			SDL_Log("changed!! %d", settingsRef.instructionsPerSecond);
 		}
+
+		ImGui::PushItemWidth(50);
+		ImGui::Text("Display Scale");
+		ImGui::SameLine();
+		if (ImGui::InputScalar("##Display Scale", ImGuiDataType_U32, &settingsRef.displayScale))
+		{
+			SDL_Log("changed!! %d", settingsRef.displayScale);
+		}
+
+		ImGui::Dummy(ImVec2(0.0f, 20.0f)); // 20px vertical space
+
+
+		if (ImGui::Button("Apply", ImVec2(-1, 0)))
+		{
+
+		}
+
+		ImGui::End();
 	}
 };
 }

@@ -38,9 +38,12 @@ int Emulator::Init()
 	// Init Windows
 	float main_scale = ImGui_ImplSDL2_GetContentScaleForDisplay(0);
 
+	m_curScreenSize.x = (int)(SCREEN_WIDTH * main_scale);
+	m_curScreenSize.y = (int)(SCREEN_HEIGHT * main_scale);
+
 	uint32_t winFlags = SDL_WINDOW_RESIZABLE;
 	//uint32_t winFlags = SDL_WINDOW_FULLSCREEN;
-	m_window = SDL_CreateWindow("Chip8Emulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (int)(SCREEN_WIDTH * main_scale), (int)(SCREEN_HEIGHT * main_scale), winFlags);
+	m_window = SDL_CreateWindow("Chip8Emulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_curScreenSize.x, m_curScreenSize.y, winFlags);
 
 	Uint32 renFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
 	m_renderer = SDL_CreateRenderer(m_window, -1, renFlags);
@@ -111,6 +114,7 @@ void Emulator::Update()
 		// Draw Windows
 		m_menuWin.Draw();
 		m_settingsWin.Draw();
+		m_viewportWin.Draw();
 
 		// Render Imgui
 		ImGui::Render();

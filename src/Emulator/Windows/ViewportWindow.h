@@ -7,11 +7,9 @@
 
 namespace Chip8Emulator
 {
-	class MenuBarWindow
+	class ViewportWindow
 	{
 	public:
-        inline static float YOffset = 0.0f;
-
 		void Draw();
 	};
 }

@@ -5,9 +5,11 @@
 
 #include "Input.h"
 #include "../Chip/Chip.h"
+#include "../Utility/Vector.h"
 
 #include "Windows/MenuBarWindow.h"
 #include "Windows/SettingsWindow.h"
+#include "Windows/ViewportWindow.h"
 
 
 namespace Chip8Emulator
@@ -31,8 +33,11 @@ public:
 	}
 
 private:
+// Status
 	bool		m_isRunning = false;
 	Settings	m_emuSettings;
+
+	Vector2Int	m_curScreenSize;
 
 	Input		m_input;
 	Chip		m_chip;
@@ -43,6 +48,7 @@ private:
 	// Imgui Windows
 	MenuBarWindow	m_menuWin;
 	SettingsWindow	m_settingsWin;
+	ViewportWindow	m_viewportWin;
 
 public:
 	Emulator() : m_isRunning(false), m_chip(m_input), m_settingsWin(m_emuSettings)
@@ -82,6 +88,27 @@ public:
 	const Settings& GetSettings()
 	{
 		return m_emuSettings;
+	}
+
+	SDL_Window* GetWindow()
+	{
+		return m_window;
+	}
+
+	void SetScreenSize(Vector2Int v)
+	{
+		m_curScreenSize.x = v.x;
+		m_curScreenSize.y = v.y;
+	}
+
+	Vector2Int GetScreenSize()
+	{
+		return m_curScreenSize;
+	}
+
+	const Chip& GetChip() const
+	{
+		return m_chip;
 	}
 };
 }

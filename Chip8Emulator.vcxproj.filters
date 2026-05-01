@@ -54,6 +54,15 @@
     <ClCompile Include="src\imgui\backends\imgui_impl_sdlrenderer2.cpp">
       <Filter>imgui\backends</Filter>
     </ClCompile>
+    <ClCompile Include="src\Emulator\Windows\MenuBarWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Chip\Components\Display.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Windows\ViewportWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Chip\Chip.h">
@@ -105,6 +114,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Emulator\Windows\MenuBarWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utility\Vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Windows\ViewportWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

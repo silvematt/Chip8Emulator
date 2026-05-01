@@ -1,5 +1,8 @@
 #include "Input.h"
 #include "Emulator.h"
+
+#include "../Utility/Vector.h"
+
 #include <imgui_impl_sdl2.h>
 
 namespace Chip8Emulator
@@ -52,6 +55,17 @@ void Input::Handle()
 		case SDL_KEYUP:
 			m_anyKeyUp = e.key.keysym.sym;
 			break;
+
+		case SDL_WINDOWEVENT:
+			// Update curScreenSize
+			if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+			{
+				Vector2Int newSize;
+				SDL_GetWindowSize(emulator.GetWindow(), &newSize.x, &newSize.y);
+				emulator.SetScreenSize(newSize);
+			}
+			break;
+
 		}
 	}
 

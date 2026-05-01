@@ -127,9 +127,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Chip\Components\Display.cpp" />
     <ClCompile Include="src\Emulator\Input.cpp" />
     <ClCompile Include="src\Emulator\Emulator.cpp" />
     <ClCompile Include="src\Chip\Chip.cpp" />
+    <ClCompile Include="src\Emulator\Windows\MenuBarWindow.cpp" />
+    <ClCompile Include="src\Emulator\Windows\ViewportWindow.cpp" />
     <ClCompile Include="src\imgui\backends\imgui_impl_sdl2.cpp" />
     <ClCompile Include="src\imgui\backends\imgui_impl_sdlrenderer2.cpp" />
     <ClCompile Include="src\imgui\imgui.cpp" />
@@ -149,6 +152,7 @@
     <ClInclude Include="src\Chip\Components\Memory.h" />
     <ClInclude Include="src\Emulator\Windows\MenuBarWindow.h" />
     <ClInclude Include="src\Emulator\Windows\SettingsWindow.h" />
+    <ClInclude Include="src\Emulator\Windows\ViewportWindow.h" />
     <ClInclude Include="src\imgui\backends\imgui_impl_sdl2.h" />
     <ClInclude Include="src\imgui\backends\imgui_impl_sdlrenderer2.h" />
     <ClInclude Include="src\imgui\imconfig.h" />
@@ -157,6 +161,7 @@
     <ClInclude Include="src\imgui\imstb_rectpack.h" />
     <ClInclude Include="src\imgui\imstb_textedit.h" />
     <ClInclude Include="src\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\Utility\Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
