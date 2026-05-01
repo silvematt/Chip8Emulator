@@ -480,4 +480,9 @@ void Chip::Op_LoadFromMemory(uint8_t x)
 	}
 }
 
+void Chip::ApplySettings(Settings newSettings)
+{
+	m_operationalSettings = newSettings;
+}
+
 }

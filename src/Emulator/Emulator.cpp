@@ -108,13 +108,21 @@ void Emulator::Update()
 		SDL_RenderClear(m_renderer);
 
 		// Run Chip
-		m_chip.Cycle(deltaTime);
+		if (!m_debuggerWin.m_oneInstructionAtTime || m_debuggerWin.m_doOneInstruction)
+		{
+			m_chip.Cycle(deltaTime);
+			m_debuggerWin.m_doOneInstruction = false;
+		}
+
 		m_chip.m_display.Update();
 
 		// Draw Windows
 		m_menuWin.Draw();
 		m_settingsWin.Draw();
 		m_viewportWin.Draw();
+		m_debuggerWin.Draw();
+		m_chipStatusWindow.Draw();
+		m_memoryMapWin.Draw();
 
 		// Render Imgui
 		ImGui::Render();

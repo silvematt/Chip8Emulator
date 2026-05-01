@@ -70,6 +70,7 @@ public:
 public:
 	void		Startup(SDL_Renderer* renderer, Settings emuSettings);
 
+	void		ApplySettings(Settings newSettings);
 
 	void		Cycle(double deltaTime);
 	uint16_t	Fetch();

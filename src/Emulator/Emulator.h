@@ -10,7 +10,9 @@
 #include "Windows/MenuBarWindow.h"
 #include "Windows/SettingsWindow.h"
 #include "Windows/ViewportWindow.h"
-
+#include "Windows/DebuggerWindow.h"
+#include "Windows/ChipStatusWindow.h"
+#include "Windows/MemoryMapWindow.h"
 
 namespace Chip8Emulator
 {
@@ -46,12 +48,15 @@ private:
 	SDL_Renderer*	m_renderer = nullptr;
 
 	// Imgui Windows
-	MenuBarWindow	m_menuWin;
-	SettingsWindow	m_settingsWin;
-	ViewportWindow	m_viewportWin;
+	MenuBarWindow		m_menuWin;
+	SettingsWindow		m_settingsWin;
+	ViewportWindow		m_viewportWin;
+	DebuggerWindow		m_debuggerWin;
+	ChipStatusWindow	m_chipStatusWindow;
+	MemoryMapWindow		m_memoryMapWin;
 
 public:
-	Emulator() : m_isRunning(false), m_chip(m_input), m_settingsWin(m_emuSettings)
+	Emulator() : m_isRunning(false), m_chip(m_input), m_settingsWin(m_emuSettings), m_chipStatusWindow(m_chip), m_memoryMapWin(m_chip)
 	{
 	}
 
@@ -106,7 +111,7 @@ public:
 		return m_curScreenSize;
 	}
 
-	const Chip& GetChip() const
+	Chip& GetChip()
 	{
 		return m_chip;
 	}

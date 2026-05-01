@@ -4,19 +4,14 @@
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_sdlrenderer2.h"
 
-#include "../Settings.h"
-
 namespace Chip8Emulator
 {
-class SettingsWindow
+class DebuggerWindow
 {
 public:
-	SettingsWindow(Settings& s) :settingsRef(s)
-	{
-	}
-
-private:
-	Settings& settingsRef;
+	bool m_debuggerEnabled = false;
+	bool m_oneInstructionAtTime = false;
+	bool m_doOneInstruction = false;
 
 public:
 	void Draw();

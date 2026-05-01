@@ -8,7 +8,7 @@ namespace Chip8Emulator
 	{
 		Emulator& emu = Emulator::Instance();
 
-		ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoCollapse);
+		ImGui::Begin("Viewport", NULL);
 		
 		// Contains the image inside the child "rect", so that it fits the window
 		ImGui::BeginChild("Container");

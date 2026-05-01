@@ -127,11 +127,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Emulator\Windows\ChipStatusWindow.cpp" />
+    <ClCompile Include="src\Emulator\Windows\DebuggerWindow.cpp" />
     <ClCompile Include="src\Chip\Components\Display.cpp" />
     <ClCompile Include="src\Emulator\Input.cpp" />
     <ClCompile Include="src\Emulator\Emulator.cpp" />
     <ClCompile Include="src\Chip\Chip.cpp" />
+    <ClCompile Include="src\Emulator\Windows\MemoryMapWindow.cpp" />
     <ClCompile Include="src\Emulator\Windows\MenuBarWindow.cpp" />
+    <ClCompile Include="src\Emulator\Windows\SettingsWindow.cpp" />
     <ClCompile Include="src\Emulator\Windows\ViewportWindow.cpp" />
     <ClCompile Include="src\imgui\backends\imgui_impl_sdl2.cpp" />
     <ClCompile Include="src\imgui\backends\imgui_impl_sdlrenderer2.cpp" />
@@ -143,6 +147,8 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Emulator\Windows\ChipStatusWindow.h" />
+    <ClInclude Include="src\Emulator\Windows\DebuggerWindow.h" />
     <ClInclude Include="src\Chip\Components\Keypad.h" />
     <ClInclude Include="src\Emulator\Settings.h" />
     <ClInclude Include="src\Emulator\Input.h" />
@@ -150,6 +156,7 @@
     <ClInclude Include="src\Chip\Chip.h" />
     <ClInclude Include="src\Chip\Components\Display.h" />
     <ClInclude Include="src\Chip\Components\Memory.h" />
+    <ClInclude Include="src\Emulator\Windows\MemoryMapWindow.h" />
     <ClInclude Include="src\Emulator\Windows\MenuBarWindow.h" />
     <ClInclude Include="src\Emulator\Windows\SettingsWindow.h" />
     <ClInclude Include="src\Emulator\Windows\ViewportWindow.h" />
