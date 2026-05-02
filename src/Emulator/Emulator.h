@@ -56,7 +56,7 @@ private:
 	MemoryMapWindow		m_memoryMapWin;
 
 public:
-	Emulator() : m_isRunning(false), m_chip(m_input), m_settingsWin(m_emuSettings), m_chipStatusWindow(m_chip), m_memoryMapWin(m_chip)
+	Emulator() : m_isRunning(false), m_chip(m_input), m_settingsWin(m_emuSettings), m_chipStatusWindow(m_chip), m_memoryMapWin(m_chip), m_debuggerWin(m_chip)
 	{
 	}
 
@@ -89,6 +89,11 @@ public:
 	// Loads a ROM directly into memory
 	// ================================================
 	void DirectLoadRom(const std::string& path);
+
+	// ================================================
+	// Resets the chip
+	// ================================================
+	void ResetChip();
 
 	const Settings& GetSettings()
 	{

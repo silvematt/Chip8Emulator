@@ -13,15 +13,6 @@ namespace Chip8Emulator
 
             if (ImGui::BeginMenu("File"))
             {
-                if (ImGui::MenuItem("Open"))
-                {
-
-                }
-                if (ImGui::MenuItem("Save"))
-                {
-
-                }
-
                 ImGui::Separator();
 
                 if (ImGui::MenuItem("Exit"))
@@ -30,18 +21,7 @@ namespace Chip8Emulator
                 }
                 ImGui::EndMenu();
             }
-            if (ImGui::BeginMenu("Edit"))
-            {
-                if (ImGui::MenuItem("Copy"))
-                {
 
-                }
-                if (ImGui::MenuItem("Paste"))
-                {
-
-                }
-                ImGui::EndMenu();
-            }
             ImGui::EndMainMenuBar();
         }
 	}

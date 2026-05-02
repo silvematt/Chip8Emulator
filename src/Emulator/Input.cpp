@@ -77,7 +77,7 @@ void Input::Handle()
 
 int Input::GetKeyHeld(SDL_Scancode key) const
 {
-	if (key < 0 || key > m_numKeys)
+	if (key < 0 || key >= m_numKeys)
 		return -1;
 
 	return m_keys[key];

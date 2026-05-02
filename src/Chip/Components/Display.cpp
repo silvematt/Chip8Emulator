@@ -1,7 +1,5 @@
 #include "Display.h"
 
-#include "../Emulator/Emulator.h"
-
 namespace Chip8Emulator
 {
 	int Display::InitDisplay(SDL_Renderer* r)
@@ -27,7 +25,7 @@ namespace Chip8Emulator
 		m_pixelFormat = SDL_AllocFormat(m_format);
 
 		// Map the colors
-		COLOR_BLACK = SDL_MapRGB(m_pixelFormat, 0, 255, 0);
+		COLOR_BLACK = SDL_MapRGB(m_pixelFormat, 0, 0, 0);
 		COLOR_WHITE = SDL_MapRGB(m_pixelFormat, 255, 255, 255);
 
 		std::fill(std::begin(m_internalBuffer), std::end(m_internalBuffer), COLOR_BLACK);

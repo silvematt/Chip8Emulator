@@ -7,6 +7,8 @@
 #include <windows.h>        // SetProcessDPIAware()
 #endif
 
+#include <nfd.h>
+
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_sdlrenderer2.h"
@@ -32,6 +34,8 @@ int Emulator::Init()
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "InputInit Error!");
 		return -2;
 	}
+
+	NFD_Init();
 
 	srand(time(NULL));
 
@@ -82,7 +86,6 @@ int Emulator::Init()
 int Emulator::Start()
 {
 	m_chip.Startup(m_renderer, m_emuSettings);
-	DirectLoadRom("IBMLogo.ch8");
 	m_isRunning = true;
 	return 0;
 }
@@ -108,7 +111,7 @@ void Emulator::Update()
 		SDL_RenderClear(m_renderer);
 
 		// Run Chip
-		if (!m_debuggerWin.m_oneInstructionAtTime || m_debuggerWin.m_doOneInstruction)
+		if ((!m_debuggerWin.m_oneInstructionAtTime || m_debuggerWin.m_doOneInstruction) && !m_debuggerWin.m_pauseChipExecution && m_chip.m_isRunning)
 		{
 			m_chip.Cycle(deltaTime);
 			m_debuggerWin.m_doOneInstruction = false;
@@ -129,8 +132,6 @@ void Emulator::Update()
 		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), m_renderer);
 
 		SDL_RenderPresent(m_renderer);
-
-		SDL_Delay(1);
 	}
 
 	Shutdown();
@@ -158,6 +159,7 @@ void Emulator::Shutdown()
 	SDL_DestroyRenderer(m_renderer);
 	SDL_DestroyWindow(m_window);
 
+	NFD_Quit();
 	SDL_Quit();
 }
 
@@ -175,9 +177,15 @@ void Emulator::DirectLoadRom(const std::string& path)
 		rom.read(reinterpret_cast<char*>(&m_chip.m_memory.memory[m_chip.pc]), size);
 
 		SDL_Log("ROM: '%s' loaded.", path.data());
+		m_chip.m_isRunning = true;
 	}
 	else
 		SDL_Log("Could not load ROM: '%s'", path.data());
+}
+
+void Emulator::ResetChip()
+{
+	m_chip.Startup(m_renderer, m_emuSettings);
 }
 
 }

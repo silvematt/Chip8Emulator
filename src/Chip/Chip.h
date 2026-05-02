@@ -27,7 +27,7 @@ public:
 
 // Status
 	bool m_isRunning = false;
-	
+
 	//-	Operational Settings
 	//	Values existing in both places:
 	//	Emulator::m_emusSettings.instructionsPerSecond is the configuration, owned by the Emulator and where the user can edit
@@ -64,7 +64,7 @@ public:
 	uint8_t m_soundTimer = 0;
 
 	// Variable Registers
-	uint8_t m_vx[16];
+	uint8_t m_vx[16] = { 0 };
 
 // Methods
 public:
@@ -122,6 +122,5 @@ public:
 	void		Op_BinaryCodedDecimalConversion(uint8_t x);					// FX33
 	void		Op_StoreIntoMemory(uint8_t x);								// FX55 
 	void		Op_LoadFromMemory(uint8_t x);								// FX65 
-
 };
 }

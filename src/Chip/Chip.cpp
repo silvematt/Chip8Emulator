@@ -15,7 +15,6 @@ void Chip::Startup(SDL_Renderer* renderer, Settings emuSettings)
 	m_keypad.Init();
 	m_delayTimer = 0;
 	m_soundTimer = 0;
-	m_isRunning = true;
 }
 
 void Chip::Cycle(double deltaTime)
