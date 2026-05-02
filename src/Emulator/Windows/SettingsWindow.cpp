@@ -29,7 +29,6 @@ void SettingsWindow::Draw()
 	ImGui::PushItemWidth(50);
 	ImGui::Text("Display Scale");
 	ImGui::SameLine();
-	ImGui::InputScalar("##Display Scale", ImGuiDataType_U32, &settingsRef.displayScale);
 
 	ImGui::Dummy(ImVec2(0.0f, 20.0f)); // 20px vertical space
 
