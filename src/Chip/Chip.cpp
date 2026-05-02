@@ -15,6 +15,19 @@ void Chip::Startup(SDL_Renderer* renderer, Settings emuSettings)
 	m_keypad.Init();
 	m_delayTimer = 0;
 	m_soundTimer = 0;
+
+	// Initialize SDL_mixer
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	{
+		SDL_Log("SDL_mixer could not be initialized. SDL_mixer Error: %s", Mix_GetError());
+	}
+
+	// Load the beep sound
+	m_beepChunk = Mix_LoadWAV("beep.wav");
+	if (m_beepChunk == nullptr)
+	{
+		SDL_Log("Failed to load beep sound effect (beep.wav). SDL_mixer Error: %s", Mix_GetError());
+	}
 }
 
 void Chip::Cycle(double deltaTime)
@@ -42,8 +55,21 @@ void Chip::Cycle(double deltaTime)
 		if (m_delayTimer > 0)
 			m_delayTimer--;
 
+		// Start beep
 		if (m_soundTimer > 0)
+		{
+			if (m_beepChunk != nullptr && m_beepChannel == -1)
+				m_beepChannel = Mix_PlayChannel(-1, m_beepChunk, -1);
+
 			m_soundTimer--;
+		}
+
+		// Stop beep when the timer hits zero
+		if (m_soundTimer == 0 && m_beepChannel != -1)
+		{
+			Mix_HaltChannel(m_beepChannel);
+			m_beepChannel = -1;
+		}
 
 		m_timerAccumulator -= TIMERS_UPDATE_RATE;
 	}
@@ -54,6 +80,17 @@ uint16_t Chip::Fetch()
 	uint16_t opcode = (m_memory.memory[pc] << 8) | m_memory.memory[pc + 1];
 	pc += 2;
 	return opcode;
+}
+
+void Chip::Cleanup()
+{
+	if (m_beepChunk != nullptr)
+	{
+		Mix_FreeChunk(m_beepChunk);
+		m_beepChunk = nullptr;
+	}
+
+	Mix_CloseAudio();
 }
 
 bool Chip::DecodeExecute(uint16_t opcode)

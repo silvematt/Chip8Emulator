@@ -150,6 +150,7 @@ void Emulator::Shutdown()
 
 	// Cleanup
 	m_chip.m_display.Destroy();
+	m_chip.Cleanup();
 
 	// Cleanup
 	ImGui_ImplSDLRenderer2_Shutdown();

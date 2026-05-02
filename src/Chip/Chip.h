@@ -5,6 +5,7 @@
 #include <stack>
 
 #include "SDL.h"
+#include <SDL_mixer.h>
 
 #include "../Emulator/Settings.h"
 #include "Components/Memory.h"
@@ -66,6 +67,10 @@ public:
 	// Variable Registers
 	uint8_t m_vx[16] = { 0 };
 
+	// Audio
+	Mix_Chunk* m_beepChunk = nullptr;
+	int m_beepChannel = -1;
+
 // Methods
 public:
 	void		Startup(SDL_Renderer* renderer, Settings emuSettings);
@@ -75,6 +80,7 @@ public:
 	void		Cycle(double deltaTime);
 	uint16_t	Fetch();
 	bool		DecodeExecute(uint16_t opcode);
+	void		Cleanup();
 
 	// Operations
 				
